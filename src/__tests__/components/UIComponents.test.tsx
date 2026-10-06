@@ -38,7 +38,7 @@ describe('Component Tests — UI Components', () => {
     const user = userEvent.setup();
     renderWithStore(<SearchBar />);
 
-    const input = screen.getByPlaceholderText('Tìm kiếm theo tên bài tập, môn học...');
+    const input = screen.getByPlaceholderText('Tìm bài tập, môn học...');
     await user.type(input, 'Toán');
     expect(input).toHaveValue('Toán');
   });

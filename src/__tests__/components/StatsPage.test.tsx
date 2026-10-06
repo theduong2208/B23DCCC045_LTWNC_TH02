@@ -52,8 +52,10 @@ describe('Component Tests — StatsPage', () => {
     renderWithStore(sample);
 
     expect(screen.getByText('📊 Thống kê bài tập')).toBeInTheDocument();
-    expect(screen.getByText('Tổng số bài')).toBeInTheDocument();
+    // Nhãn trong stat-card đã đổi thành "Tổng cộng"
+    expect(screen.getByText('Tổng cộng')).toBeInTheDocument();
     expect(screen.getByText('Tỷ lệ hoàn thành')).toBeInTheDocument();
-    expect(screen.getByText('50%')).toBeInTheDocument();
+    // "50%" được render thành "50" + "%" trong hai text node riêng — dùng regex
+    expect(screen.getByText(/50\s*%/)).toBeInTheDocument();
   });
 });

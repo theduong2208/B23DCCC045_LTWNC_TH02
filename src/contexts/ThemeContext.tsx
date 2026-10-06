@@ -35,6 +35,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  /* Gắn data-theme lên <html> để CSS variables hoạt động toàn trang */
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
   /* useMemo: object value chỉ tạo lại khi theme hoặc toggleTheme thay đổi */
   const value = useMemo<ThemeContextValue>(
     () => ({ theme, toggleTheme }),
@@ -43,10 +48,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeContext.Provider value={value}>
-      {/* Gắn data-theme lên <html> để CSS variables hoạt động */}
-      <div data-theme={theme} style={{ display: 'contents' }}>
-        {children}
-      </div>
+      {children}
     </ThemeContext.Provider>
   );
 }

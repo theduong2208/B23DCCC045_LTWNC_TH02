@@ -70,6 +70,8 @@
    Dark theme — ghi đè CSS variables khi data-theme="dark"
 ============================================================ */
 [data-theme="dark"] {
+  color-scheme: dark; /* native controls (select, scrollbar, date input) tự dark */
+
   --bg-page:    #0f1117;
   --bg-surface: #1a1d2e;
   --bg-sidebar: #0d0f1a;
@@ -92,6 +94,10 @@
   --shadow-md:   0 4px 16px rgba(0,0,0,0.4);
   --shadow-card: 0 2px 8px rgba(0,0,0,0.3);
   --shadow-modal:0 20px 60px rgba(0,0,0,0.6);
+
+  /* accent-light cần tối hơn trong dark mode */
+  --accent-light:  rgba(232,52,78,0.15);
+  --accent-border: rgba(232,52,78,0.35);
 }
 
 /* ============================================================
@@ -99,9 +105,13 @@
 ============================================================ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body { height: 100%; }
+html {
+  height: 100%;
+  color-scheme: light; /* default — sẽ bị ghi đè bởi [data-theme=dark] */
+}
 
 body {
+  height: 100%;
   background: var(--bg-page);
   color: var(--text-primary);
   font-family: var(--font);
@@ -110,7 +120,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-button, input, select { font-family: inherit; font-size: inherit; }
+button, input, select, textarea { font-family: inherit; font-size: inherit; }
 
 :focus-visible {
   outline: 2px solid var(--border-focus);
@@ -995,13 +1005,13 @@ a { transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms 
 
 .a-form input:hover,
 .a-form select:hover {
-  border-color: #d1d5db;
+  border-color: var(--text-muted);
 }
 
 .a-form input:focus,
 .a-form select:focus {
   border-color: var(--border-focus);
-  background: #fff;
+  background: var(--bg-surface); /* không hardcode #fff — sẽ sai trong dark mode */
   outline: none;
   box-shadow: 0 0 0 3px rgba(232,52,78,0.1);
 }
