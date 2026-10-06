@@ -1,15 +1,27 @@
-export function Sidebar() {
-  const navItems = [
-    { icon: '🏠', label: 'Trang chủ', active: true },
-    { icon: '📋', label: 'Bài tập', active: false },
-    { icon: '📅', label: 'Lịch học', active: false },
-    { icon: '🔔', label: 'Thông báo', active: false },
-    { icon: '📊', label: 'Thống kê', active: false },
+// Sidebar nhận activeView và onViewChange để điều hướng giữa list ↔ stats
+interface NavItem {
+  icon: string;
+  label: string;
+  view: string | null; // null = không điều hướng
+}
+
+interface SidebarProps {
+  activeView: string;
+  onViewChange: (view: 'list' | 'stats') => void;
+}
+
+export function Sidebar({ activeView, onViewChange }: SidebarProps) {
+  const navItems: NavItem[] = [
+    { icon: '🏠', label: 'Trang chủ', view: 'list' },
+    { icon: '📋', label: 'Bài tập', view: 'list' },
+    { icon: '📅', label: 'Lịch học', view: null },
+    { icon: '🔔', label: 'Thông báo', view: null },
+    { icon: '📊', label: 'Thống kê', view: 'stats' },
   ];
 
-  const bottomItems = [
-    { icon: '⚙️', label: 'Cài đặt', active: false },
-    { icon: '❓', label: 'Trợ giúp', active: false },
+  const bottomItems: NavItem[] = [
+    { icon: '⚙️', label: 'Cài đặt', view: null },
+    { icon: '❓', label: 'Trợ giúp', view: null },
   ];
 
   return (
@@ -26,20 +38,29 @@ export function Sidebar() {
       {/* Main nav */}
       <div className="sidebar__section-label">Menu chính</div>
       <nav className="sidebar__nav">
-        {navItems.map((item) => (
-          <button
-            key={item.label}
-            type="button"
-            className={`sidebar__link ${item.active ? 'sidebar__link--active' : ''}`}
-            aria-current={item.active ? 'page' : undefined}
-          >
-            <span className="sidebar__link-icon">{item.icon}</span>
-            <span>{item.label}</span>
-            {item.label === 'Bài tập' && (
-              <span className="sidebar__link-badge">4</span>
-            )}
-          </button>
-        ))}
+        {navItems.map((item) => {
+          const isActive =
+            item.view !== null && item.view === activeView;
+          return (
+            <button
+              key={item.label}
+              type="button"
+              className={`sidebar__link ${isActive ? 'sidebar__link--active' : ''}`}
+              aria-current={isActive ? 'page' : undefined}
+              onClick={() => {
+                if (item.view === 'list' || item.view === 'stats') {
+                  onViewChange(item.view);
+                }
+              }}
+            >
+              <span className="sidebar__link-icon">{item.icon}</span>
+              <span>{item.label}</span>
+              {item.label === 'Bài tập' && (
+                <span className="sidebar__link-badge">4</span>
+              )}
+            </button>
+          );
+        })}
       </nav>
 
       {/* Bottom nav */}

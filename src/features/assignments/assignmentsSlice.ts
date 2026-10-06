@@ -12,6 +12,7 @@ import type { RootState } from '../../app/store';
 interface AssignmentsState extends AsyncState<Assignment[]> {
   filter: StatusFilter;
   addStatus: 'idle' | 'loading' | 'failed';
+  searchQuery: string;
 }
 
 const initialState: AssignmentsState = {
@@ -20,6 +21,7 @@ const initialState: AssignmentsState = {
   error: null,
   filter: 'all',
   addStatus: 'idle',
+  searchQuery: '',
 };
 
 // ------------------------------------------------------------------
@@ -70,6 +72,13 @@ const assignmentsSlice = createSlice({
     setFilter(state, action: PayloadAction<StatusFilter>) {
       state.filter = action.payload;
     },
+    setSearchQuery(state, action: PayloadAction<string>) {
+      state.searchQuery = action.payload;
+    },
+    /** Thêm nhiều bài tập cùng lúc — dùng cho stress test 10.000 items */
+    addMany(state, action: PayloadAction<Assignment[]>) {
+      state.data.push(...action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -99,7 +108,13 @@ const assignmentsSlice = createSlice({
   },
 });
 
-export const { toggleCompleted, removeAssignment, setFilter } = assignmentsSlice.actions;
+export const {
+  toggleCompleted,
+  removeAssignment,
+  setFilter,
+  setSearchQuery,
+  addMany,
+} = assignmentsSlice.actions;
 export default assignmentsSlice.reducer;
 
 // ------------------------------------------------------------------
@@ -111,17 +126,33 @@ export const selectFilter = (state: RootState): StatusFilter => state.assignment
 export const selectStatus = (state: RootState) => state.assignments.status;
 export const selectError = (state: RootState) => state.assignments.error;
 export const selectAddStatus = (state: RootState) => state.assignments.addStatus;
+export const selectSearchQuery = (state: RootState): string => state.assignments.searchQuery;
 
 export const selectFilteredAssignments = (state: RootState): Assignment[] => {
-  const { data, filter } = state.assignments;
+  const { data, filter, searchQuery } = state.assignments;
+
+  // Bước 1: lọc theo trạng thái
+  let result: Assignment[];
   switch (filter) {
     case 'pending':
-      return data.filter((a) => !a.completed && !isOverdue(a.dueDate, a.completed));
+      result = data.filter((a) => !a.completed && !isOverdue(a.dueDate, a.completed));
+      break;
     case 'overdue':
-      return data.filter((a) => isOverdue(a.dueDate, a.completed));
+      result = data.filter((a) => isOverdue(a.dueDate, a.completed));
+      break;
     case 'completed':
-      return data.filter((a) => a.completed);
+      result = data.filter((a) => a.completed);
+      break;
     default:
-      return data;
+      result = data;
   }
+
+  // Bước 2: lọc theo từ khóa tìm kiếm (nếu có)
+  if (searchQuery.trim() === '') return result;
+  const q = searchQuery.toLowerCase();
+  return result.filter(
+    (a) =>
+      a.title.toLowerCase().includes(q) ||
+      a.subject.toLowerCase().includes(q)
+  );
 };

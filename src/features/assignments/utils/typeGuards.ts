@@ -34,6 +34,12 @@ export function isOverdue(dueDate: string, completed: boolean): boolean {
   return new Date(dueDate).getTime() < Date.now();
 }
 
+/** Tính số ngày còn lại đến hạn. Trả về số âm nếu quá hạn. */
+export function calcDaysLeft(dueDate: string, nowMs = Date.now()): number {
+  const diffTime = new Date(dueDate).getTime() - nowMs;
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
 /** Generic helper — nhóm phần tử theo khoá bất kỳ, tái sử dụng cho nhiều loại dữ liệu. */
 export function groupBy<T, K extends string | number>(
   items: T[],

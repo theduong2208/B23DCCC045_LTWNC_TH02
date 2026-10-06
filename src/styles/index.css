@@ -67,6 +67,34 @@
 }
 
 /* ============================================================
+   Dark theme — ghi đè CSS variables khi data-theme="dark"
+============================================================ */
+[data-theme="dark"] {
+  --bg-page:    #0f1117;
+  --bg-surface: #1a1d2e;
+  --bg-sidebar: #0d0f1a;
+  --bg-sidebar-hover: rgba(255,255,255,0.06);
+  --bg-sidebar-active: rgba(232,52,78,0.22);
+  --bg-input:   #252840;
+  --bg-tag:     rgba(232,52,78,0.15);
+
+  --text-primary:   #e8eaf0;
+  --text-secondary: #9ca3af;
+  --text-muted:     #6b7280;
+  --text-sidebar:   #a8b0c0;
+  --text-sidebar-active: #ffffff;
+  --text-on-accent: #ffffff;
+
+  --border:       #2d3045;
+  --border-focus: rgba(232,52,78,0.6);
+
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.4);
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-modal:0 20px 60px rgba(0,0,0,0.6);
+}
+
+/* ============================================================
    Reset
 ============================================================ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -88,6 +116,41 @@ button, input, select { font-family: inherit; font-size: inherit; }
   outline: 2px solid var(--border-focus);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
+}
+
+/* Smooth transition khi đổi theme */
+*, *::before, *::after {
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+}
+
+/* Override: tắt transition trên animation/hover để không lag */
+button, a { transition: none; }
+button:not(.app-header__icon-btn),
+a { transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease; }
+
+/* Pin card highlight */
+.a-card--pinned {
+  border-left: 3px solid var(--accent) !important;
+  box-shadow: 0 0 0 1px var(--accent-border), var(--shadow-card);
+}
+
+/* Pin badge inline */
+.a-card__pin-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  border: 1px solid var(--accent-border);
+  margin-left: auto;
+}
+
+/* Active state cho nút đang được kích hoạt */
+.btn--active {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-color: var(--accent-border);
 }
 
 /* ============================================================
@@ -1033,3 +1096,147 @@ button, input, select { font-family: inherit; font-size: inherit; }
   .a-card__actions { justify-content: flex-start; }
   .welcome-banner__emoji { display: none; }
 }
+
+/* ============================================================
+   SearchBar
+============================================================ */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  transition: border-color var(--transition);
+}
+.search-bar:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(232,52,78,0.08);
+}
+.search-bar__icon { font-size: 14px; color: var(--text-muted); flex-shrink: 0; }
+.search-bar__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  outline: none;
+  font-size: 14px;
+}
+.search-bar__input::placeholder { color: var(--text-muted); }
+.search-bar__clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+.search-bar__clear:hover { background: var(--border); color: var(--text-primary); }
+
+/* ============================================================
+   Stress Test Bar
+============================================================ */
+.stress-test-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  gap: 12px;
+}
+.stress-test-bar__count { color: var(--text-secondary); font-size: 13px; }
+.stress-test-bar__count strong { color: var(--text-primary); }
+.a-list-container { display: flex; flex-direction: column; }
+.a-list--virtual { outline: none; }
+
+/* ============================================================
+   Stats Page
+============================================================ */
+.stats-page { padding: 0; }
+.stats-page__title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.stat-card__emoji { font-size: 1.8rem; margin-bottom: 8px; }
+.stat-card__value { font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }
+.stat-card__label { font-size: 12px; color: var(--text-secondary); }
+.stat-card--blue .stat-card__value { color: #3b82f6; }
+.stat-card--green .stat-card__value { color: #10b981; }
+.stat-card--red .stat-card__value { color: #ef4444; }
+.stat-card--yellow .stat-card__value { color: #f59e0b; }
+
+.stats-section { margin-bottom: 24px; }
+.stats-section__title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+.stats-progress {
+  background: var(--bg-input);
+  border-radius: var(--radius-full);
+  height: 20px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.stats-progress__bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #ff6b6b);
+  border-radius: var(--radius-full);
+  transition: width 600ms ease;
+}
+.stats-progress__label {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.stats-subjects { display: flex; flex-direction: column; gap: 10px; }
+.stats-subject-row {
+  display: grid;
+  grid-template-columns: 1fr auto 160px;
+  align-items: center;
+  gap: 12px;
+}
+.stats-subject-row__name { font-size: 13px; color: var(--text-primary); }
+.stats-subject-row__count { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+.stats-subject-row__bar-wrap {
+  height: 8px;
+  background: var(--bg-input);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.stats-subject-row__bar {
+  height: 100%;
+  background: var(--accent);
+  border-radius: var(--radius-full);
+  transition: width 400ms ease;
+}
